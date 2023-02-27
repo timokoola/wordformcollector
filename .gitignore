@@ -127,3 +127,23 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# kotus words, you need to generate it yourself
+kotus_all.json
+
+# output from docker
+output.json
+*.jsonl
+fullest_text.txt
+
+# opml files
+*.opml
+
+# gutenberg directory
+gutenberg/
+
+# feeds directory
+feeds/
+
+# downloads directory
+downloads/
