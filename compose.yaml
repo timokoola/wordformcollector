@@ -6,4 +6,7 @@ services:
     volumes:
       - ./feeds:/feeds
       - ~/.config/gcloud:/home/normaluser/.config/gcloud
+    environment:
+      - OPML_FILE=suomi_feeds.opml
+      - BUCKET_NAME=suomiqueriestimokoolacom
   
