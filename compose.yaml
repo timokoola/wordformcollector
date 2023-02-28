@@ -2,7 +2,7 @@ services:
   feed_handler:
     build: 
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: .
     volumes:
       - ./feeds:/feeds
       - ~/.config/gcloud:/home/normaluser/.config/gcloud
