@@ -80,7 +80,7 @@ def extract_unique_words(unique_words, gutenberg_results):
     return unique_gutenberg_words
 
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["POST"])
 def main():
     # read opml file name from environment variable
     opml_file = os.environ["OPML_FILE"]

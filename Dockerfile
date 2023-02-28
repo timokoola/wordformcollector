@@ -34,4 +34,4 @@ COPY handle_feed_contents.py .
 
 ENV PORT 8080
 
-ENTRYPOINT ["python3", "handle_feed_contents.py", "--opml_file=suomi_feeds.opml", "--bucket_name=suomiqueriestimokoolacom"]
+ENTRYPOINT ["python3", "handle_feed_contents.py"]
