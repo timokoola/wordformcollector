@@ -34,4 +34,7 @@ COPY handle_feed_contents.py .
 
 ENV PORT 8080
 
+# expose the port 8080
+EXPOSE 8080
+
 ENTRYPOINT ["python3", "handle_feed_contents.py"]

@@ -27,6 +27,9 @@ def extraxt_text_from_feed(feed):
     feed_count = len(feed_entries)
     full_text = ""
     for entry in feed_entries:
+        # if entry is older than 24 hours skip it
+        if time.time() - entry.published_parsed.tm_hour > 86400:
+            continue
         full_text += entry.title + " " + entry.description
         if "summary" in entry:
             full_text += " " + entry.summary
