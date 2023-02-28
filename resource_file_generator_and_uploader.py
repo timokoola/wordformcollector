@@ -1,3 +1,4 @@
+import os
 import xmltodict
 import json
 import collections
@@ -5,10 +6,8 @@ import typing
 import argparse
 
 
-def toTn(tn):
-    pass
-
-
+# this is a helper function to convert the xml to a list of tuples
+# the xml is a bit messy, so this is a bit messy
 def toLine(item):
     if "s" not in item or "t" not in item:
         return (item["s"], -1, "_")
@@ -44,6 +43,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # Download and unzip the file from https://kaino.kotus.fi/sanat/nykysuomi/kotus-sanalista-v1.zip
     parser.add_argument("--kotus-file", type=str, default="kotus-sanalista_v1.xml")
+    parser.add_argument("--bucket-name", type=str)
     args = parser.parse_args()
 
     with open(args.kotus_file, "r") as f:
@@ -95,3 +95,9 @@ if __name__ == "__main__":
 
     with open("kotus_all.json", "w+") as f:
         f.write(json.dumps(results, indent=4, ensure_ascii=False))
+
+    # upload kotus_all.json to gcp bucket
+    os.system(f"gsutil cp kotus_all.json gs://{args.bucket_name}/kotus_all.json")
+
+    # upload also all *.opml files present to gcp bucket
+    os.system(f"gsutil cp *.opml gs://{args.bucket_name}/")

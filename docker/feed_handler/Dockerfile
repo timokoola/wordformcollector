@@ -29,8 +29,8 @@ WORKDIR /home/${username}
 # Switch to our newly created user
 USER ${username}
 
-COPY basic_feeds.opml .
+COPY suomi_feeds.opml .
 COPY kotus_all.json .
 COPY handle_feed_contents.py .
 
-ENTRYPOINT ["python3", "handle_feed_contents.py", "basic_feeds.opml"]
+ENTRYPOINT ["python3", "handle_feed_contents.py", "--opml_file=suomi_feeds.opml", "--bucket_name=suomiqueriestimokoolacom"]

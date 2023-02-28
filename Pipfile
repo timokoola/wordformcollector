@@ -5,6 +5,10 @@ name = "pypi"
 
 [packages]
 xmltodict = "*"
+jsonlines = "*"
+opml = "*"
+feedparser = "*"
+libvoikko = "*"
 
 [dev-packages]
 black = "*"
