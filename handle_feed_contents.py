@@ -1,4 +1,5 @@
-import argparse
+from flask import Flask, request
+
 import json
 import os
 import time
@@ -8,6 +9,8 @@ import jsonlines
 import opml
 import feedparser
 import libvoikko
+
+app = Flask(__name__)
 
 
 def extract_feed_urls(outline: Element) -> List[str]:
@@ -77,7 +80,8 @@ def extract_unique_words(unique_words, gutenberg_results):
     return unique_gutenberg_words
 
 
-if __name__ == "__main__":
+@app.route("/", methods=["GET"])
+def main():
     # read opml file name from environment variable
     opml_file = os.environ["OPML_FILE"]
     # read bucket name from environment variable
@@ -157,3 +161,9 @@ if __name__ == "__main__":
 
     # upload the file to gcp bucket bucket_name
     os.system(f"gsutil cp {output} gs://{bucket_name}")
+    return "ok", 200
+
+
+if __name__ == "__main__":
+    # this is a flask app
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))

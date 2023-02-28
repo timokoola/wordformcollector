@@ -9,6 +9,7 @@ jsonlines = "*"
 opml = "*"
 feedparser = "*"
 libvoikko = "*"
+flask = "*"
 
 [dev-packages]
 black = "*"

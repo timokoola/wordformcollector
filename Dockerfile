@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y python3-pip libvoikko-dev python-libvoi
     jsonlines \
     humanize \
     opml \
+    flask \
     feedparser \
     requests && rm -rf /var/lib/apt/lists/*
 
@@ -30,5 +31,7 @@ WORKDIR /home/${username}
 USER ${username}
 
 COPY handle_feed_contents.py .
+
+ENV PORT 8080
 
 ENTRYPOINT ["python3", "handle_feed_contents.py", "--opml_file=suomi_feeds.opml", "--bucket_name=suomiqueriestimokoolacom"]
