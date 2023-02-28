@@ -102,7 +102,7 @@ def main():
         exit(1)
 
     # epoc timestamped file name in feeds directory
-    output = f"/feeds/{int(time.time())}.jsonl"
+    output = f"feeds/{int(time.time())}.jsonl"
 
     # ensure the feeds directory exists
     if not os.path.exists("feeds"):
