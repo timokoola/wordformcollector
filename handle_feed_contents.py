@@ -90,6 +90,8 @@ def main():
     # download kotus and opml files from gcp bucket
     os.system(f"gsutil cp gs://{bucket_name}/kotus_all.json .")
     os.system(f"gsutil cp gs://{bucket_name}/{opml_file} .")
+    # also download the unique words file
+    os.system(f"gsutil cp gs://{bucket_name}/unique_words.json .")
 
     # verify that the files were downloaded
     # and error out if they were not
@@ -130,6 +132,13 @@ def main():
     # get kotus data
     kotus = get_kotus_data()
     # set to determine if we need to process the word
+    # use the unique_words.json from the bucket
+    # to avoid processing words that have already been processed
+    with open("unique_words.json") as f:
+        json_data = json.load(f)
+        # extract the unique words from the json
+        already_processed = set(json_data["words"])
+
     unique_words = set([w["word"] for w in kotus])
     # kotus words as a dictionary for faster lookup
     kotus_dict = dict([(x["word"], x) for x in kotus])
@@ -139,7 +148,7 @@ def main():
     word_forms = [
         (word, voikko.analyze(word))
         for word in full_text.split()
-        if len(voikko.analyze(word)) > 0
+        if word not in already_processed and len(voikko.analyze(word)) > 0
     ]
 
     flat_words = flatten_voikko_results(word_forms)
