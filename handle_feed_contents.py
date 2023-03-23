@@ -1,24 +1,37 @@
-from flask import Flask, request
+from flask import Flask
 
 import json
 import os
 import time
 from typing import List
-from xml.dom.minidom import Element
 import jsonlines
-import opml
 import feedparser
 import libvoikko
+from logging.config import dictConfig
+
+dictConfig(
+    {
+        "version": 1,
+        "formatters": {
+            "default": {
+                "format": "[%(asctime)s] %(levelname)s in %(module)s: %(message)s",
+            }
+        },
+        "handlers": {
+            "wsgi": {
+                "class": "logging.StreamHandler",
+                "stream": "ext://flask.logging.wsgi_errors_stream",
+                "formatter": "default",
+            }
+        },
+        "root": {"level": "INFO", "handlers": ["wsgi"]},
+    }
+)
+
 
 app = Flask(__name__)
-
-
-def extract_feed_urls(outline: Element) -> List[str]:
-    feeds = outline[0]
-    feedUrls = []
-    for feed in feeds:
-        feedUrls.append(feed.xmlUrl)
-    return feedUrls
+# enable debugging
+app.config["DEBUG"] = True
 
 
 def extraxt_text_from_feed(feed):
@@ -44,7 +57,7 @@ def get_kotus_data() -> dict:
     # remove duplicates
     kotus = list({v["word"]: v for v in kotus}.values())
     # report how many duplicates were removed
-    print(f"Removed {pre_len - len(kotus)} duplicates")
+    app.logger.info(f"Removed {pre_len - len(kotus)} duplicates")
     f.close()
     return kotus
 
@@ -83,6 +96,7 @@ def extract_unique_words(unique_words, gutenberg_results):
 @app.route("/", methods=["POST"])
 def main():
     # read opml file name from environment variable
+    # changed it to a txt file for easier editing and parsing
     opml_file = os.environ["OPML_FILE"]
     # read bucket name from environment variable
     bucket_name = os.environ["BUCKET_NAME"]
@@ -96,11 +110,11 @@ def main():
     # verify that the files were downloaded
     # and error out if they were not
     if not os.path.exists("kotus_all.json"):
-        print("kotus_all.json not found")
+        app.logger.error("kotus_all.json not found")
         exit(1)
 
     if not os.path.exists(opml_file):
-        print(f"{opml_file} not found")
+        app.logger.error(f"{opml_file} not found")
         exit(1)
 
     # epoc timestamped file name in feeds directory
@@ -110,18 +124,19 @@ def main():
     if not os.path.exists("feeds"):
         os.makedirs("feeds")
 
-    # parse the opml file
-    outline = opml.parse(opml_file)
+    app.logger.info("Parsing OPML file...")
+    # get the list of feeds from the now txt file
+    with open(opml_file) as f:
+        feedUrls = [line.rstrip() for line in f]
 
-    print("Parsing OPML file...")
-    # get the list of feeds
-    feedUrls = extract_feed_urls(outline)
+    app.logger.info(f"Found {len(feedUrls)} feeds in OPML file...")
 
     full_text = ""
     # for reporting purposes
     feed_count = 0
 
     for feed in feedUrls:
+        app.logger.info(f"Processing feed {feed}...")
         text, count = extraxt_text_from_feed(feed)
         full_text += text
         feed_count += count
