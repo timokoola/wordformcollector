@@ -124,7 +124,7 @@ def main():
     if not os.path.exists("feeds"):
         os.makedirs("feeds")
 
-    app.logger.info("Parsing OPML file...")
+    app.logger.info("Parsing the now txt file...")
     # get the list of feeds from the now txt file
     with open(opml_file) as f:
         feedUrls = [line.rstrip() for line in f]
