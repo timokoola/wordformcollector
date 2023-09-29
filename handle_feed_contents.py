@@ -40,7 +40,10 @@ def extraxt_text_from_feed(feed):
     feed_count = len(feed_entries)
     full_text = ""
     for entry in feed_entries:
-        full_text += entry.title + " " + entry.description
+        full_text += entry.title
+
+        if "description" in entry:
+            full_text += " " + entry.description
         if "summary" in entry:
             full_text += " " + entry.summary
         if "content" in entry:
